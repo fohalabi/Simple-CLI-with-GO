@@ -52,3 +52,14 @@ func completeTask(tasks []Task, id int) []Task {
 	}
 	return tasks
 }
+
+func deleteTask(tasks []Task, id int) [] Task {
+	for i, task := range tasks {
+		if task.ID == id {
+			tasks = append(tasks[:i], tasks[i+1:]...)
+			fmt.Printf("Task '%s' deleted.\n", task.Title)
+			break
+		}
+	}
+	return tasks
+}
