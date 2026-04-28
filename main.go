@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"strconv"
+)
 
 
 type Task struct {
@@ -13,8 +17,29 @@ func main() {
 	fmt.Println("Task Manager")
 
 	tasks := []Task{}
-	tasks = addTask(tasks, "Buy groceries")
-	listTasks(tasks)
+
+	args := os.Args[1:]
+
+	if len(args) == 0 {
+		fmt.Println("No command provided.")
+		return
+	}
+
+	switch args[0] {
+	case "add":
+		tasks = addTask(tasks, args[1])
+	case "list":
+		listTasks(tasks)
+	case "complete":
+		id, _ := strconv.Atoi(args[1])
+		tasks = completeTask(tasks, id)
+	case "delete":
+		id, _ := strconv.Atoi(args[1])
+		tasks = deleteTask(tasks, id)
+	default:
+		fmt.Println("Unknown command.")
+	}
+	
 }
 
 func addTask(tasks []Task, title string) []Task {
