@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"encoding/json"
 )
 
 
@@ -25,17 +26,22 @@ func main() {
 		return
 	}
 
+	tasks, _ = loadTasks()
+
 	switch args[0] {
 	case "add":
 		tasks = addTask(tasks, args[1])
+		saveTasks(tasks)
 	case "list":
 		listTasks(tasks)
 	case "complete":
 		id, _ := strconv.Atoi(args[1])
 		tasks = completeTask(tasks, id)
+		saveTasks(tasks)
 	case "delete":
 		id, _ := strconv.Atoi(args[1])
 		tasks = deleteTask(tasks, id)
+		saveTasks(tasks)
 	default:
 		fmt.Println("Unknown command.")
 	}
@@ -87,4 +93,19 @@ func deleteTask(tasks []Task, id int) [] Task {
 		}
 	}
 	return tasks
+}
+
+func saveTasks(tasks []Task) error {
+    data, _ := json.MarshalIndent(tasks, "", " ")
+    return os.WriteFile("tasks.json", data, 0644)
+}
+
+func loadTasks() ([]Task, error) {
+    var tasks []Task
+    data, err := os.ReadFile("tasks.json")
+    if err != nil {
+        return tasks, err
+    }
+    err = json.Unmarshal(data, &tasks)
+    return tasks, err
 }
